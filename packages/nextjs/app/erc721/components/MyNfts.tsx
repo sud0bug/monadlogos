@@ -19,12 +19,12 @@ export const MyNfts = () => {
   const [myNfts, setMyNfts] = useState<Collectible[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const { data: se2NftContract } = useScaffoldContract({
-    contractName: "SE2NFT",
+  const { data: monadLogoNFTContract } = useScaffoldContract({
+    contractName: "MonadLogoNFT",
   });
 
   const { data: balance } = useScaffoldReadContract({
-    contractName: "SE2NFT",
+    contractName: "MonadLogoNFT",
     functionName: "balanceOf",
     args: [connectedAddress],
     watch: true,
@@ -32,16 +32,16 @@ export const MyNfts = () => {
 
   useEffect(() => {
     const updateMyNfts = async (): Promise<void> => {
-      if (balance === undefined || se2NftContract === undefined || connectedAddress === undefined) return;
+      if (balance === undefined || monadLogoNFTContract === undefined || connectedAddress === undefined) return;
 
       setLoading(true);
       const collectibleUpdate: Collectible[] = [];
       const totalBalance = parseInt(balance.toString());
       for (let tokenIndex = 0; tokenIndex < totalBalance; tokenIndex++) {
         try {
-          const tokenId = await se2NftContract.read.tokenOfOwnerByIndex([connectedAddress, BigInt(tokenIndex)]);
+          const tokenId = await monadLogoNFTContract.read.tokenOfOwnerByIndex([connectedAddress, BigInt(tokenIndex)]);
 
-          const tokenURI = await se2NftContract.read.tokenURI([tokenId]);
+          const tokenURI = await monadLogoNFTContract.read.tokenURI([tokenId]);
 
           const tokenMetadata = await fetch(tokenURI);
           const metadata = await tokenMetadata.json();

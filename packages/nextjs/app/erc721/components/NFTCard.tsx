@@ -6,7 +6,7 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 export const NFTCard = ({ nft, transfer }: { nft: Collectible; transfer?: boolean }) => {
   const [transferToAddress, setTransferToAddress] = useState("");
 
-  const { writeContractAsync } = useScaffoldWriteContract("SE2NFT");
+  const { writeContractAsync } = useScaffoldWriteContract("MonadLogoNFT");
 
   return (
     <div className="card card-compact bg-base-100 shadow-lg w-[300px] shadow-secondary">
@@ -24,6 +24,14 @@ export const NFTCard = ({ nft, transfer }: { nft: Collectible; transfer?: boolea
         <div className="flex space-x-3 mt-1 items-center">
           <span className="text-lg font-semibold">Owner : </span>
           <Address address={nft.owner} />
+        </div>
+        <div className="flex space-x-3 mt-1 items-center">
+          <span className="text-lg font-semibold">Color : </span>
+          <div className="flex items-center space-x-2">
+            <span className="text-lg font-semibold ms-0">
+              {JSON.parse(atob(nft.uri.replace('data:application/json;base64,', ''))).attributes[0].value}
+            </span>
+          </div>
         </div>
         {transfer && (
           <>

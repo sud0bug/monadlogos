@@ -2,8 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
-import { DeploySE2Nft } from "./DeploySE2Nft.s.sol";
-
+import { DeployMonadLogoNFT } from "./DeployMonadLogoNFT.s.sol";
 /**
  * @notice Main deployment script for all contracts
  * @dev Run this when you want to deploy multiple contracts at once
@@ -15,10 +14,9 @@ contract DeployScript is ScaffoldETHDeploy {
         // Deploys all your contracts sequentially
         // Add new deployments here when needed
 
-        DeploySE2Nft deploySE2Nft = new DeploySE2Nft();
-        deploySE2Nft.run();
-
-        // Deploy another contract
+        DeployMonadLogoNFT deployMonadLogoNFT = new DeployMonadLogoNFT();
+        deployMonadLogoNFT.run();
+// Deploy another contract
         // DeployMyContract myContract = new DeployMyContract();
         // myContract.run();
     }

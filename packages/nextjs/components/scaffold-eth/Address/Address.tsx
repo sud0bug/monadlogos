@@ -7,6 +7,7 @@ import { normalize } from "viem/ens";
 import { useEnsAvatar, useEnsName } from "wagmi";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import { useNNS } from "~~/hooks/useNNS";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 
 const textSizeMap = {
@@ -93,6 +94,7 @@ export const Address = ({
       enabled: isAddress(checkSumAddress ?? ""),
     },
   });
+  
   const { data: ensAvatar } = useEnsAvatar({
     name: ens ? normalize(ens) : undefined,
     chainId: 1,
@@ -102,11 +104,16 @@ export const Address = ({
     },
   });
 
+  const { name: nns, avatar: nnsAvatar, isLoading: isNNSLoading } = useNNS(address);
+  
+
   const shortAddress = checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4);
   const displayAddress = format === "long" ? checkSumAddress : shortAddress;
-  const displayEnsOrAddress = ens || displayAddress;
+  const displayEnsOrAddress = nns || ens || displayAddress;
+  console.log("displayEnsOrAddress=>"+nns, displayEnsOrAddress);
+  
 
-  const showSkeleton = !checkSumAddress || (!onlyEnsOrAddress && (ens || isEnsNameLoading));
+  const showSkeleton = !checkSumAddress || (!onlyEnsOrAddress && (ens || nns || isEnsNameLoading || isNNSLoading));
 
   const addressSize = showSkeleton && !onlyEnsOrAddress ? getPrevSize(textSizeMap, size, 2) : size;
   const ensSize = getNextSize(textSizeMap, addressSize);
@@ -147,13 +154,13 @@ export const Address = ({
       <div className="flex-shrink-0">
         <BlockieAvatar
           address={checkSumAddress}
-          ensImage={ensAvatar}
+          ensImage={(nns ? nnsAvatar : ensAvatar) || ensAvatar}
           size={(blockieSizeMap[blockieSize] * 24) / blockieSizeMap["base"]}
         />
       </div>
       <div className="flex flex-col">
         {showSkeleton &&
-          (isEnsNameLoading ? (
+          (isEnsNameLoading || isNNSLoading ? (
             <div className={`ml-1.5 skeleton rounded-lg font-bold ${textSizeMap[ensSize]}`}>
               <span className="invisible">{shortAddress}</span>
             </div>
@@ -163,7 +170,7 @@ export const Address = ({
                 disableAddressLink={disableAddressLink}
                 blockExplorerAddressLink={blockExplorerAddressLink}
               >
-                {ens}
+                {nns || ens}
               </AddressLinkWrapper>
             </span>
           ))}

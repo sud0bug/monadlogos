@@ -1,0 +1,53 @@
+.animation-container {
+	position: relative;
+	width: 200px;
+	height: 200px;
+	margin: 0 auto;
+	display: flex;
+}
+
+.moving-div {
+	width: 50px;
+	height: 50px;
+	position: absolute;
+	animation: moveAlongPath 5s linear infinite;
+	offset-path: path(
+		"M100 0C70.8719 0 0 70.87 0 100C0 129.13 70.8719 200 100 200C129.127 200 200 129.128 200 100C200 70.872 129.128 0 100 0Z"
+	);
+	offset-rotate: auto;
+}
+
+.moving-div:nth-child(2) {
+	animation-delay: -0.833s;
+}
+
+.moving-div:nth-child(3) {
+	animation-delay: -1.666s;
+}
+
+.moving-div:nth-child(4) {
+	animation-delay: -2.5s;
+}
+
+.moving-div:nth-child(5) {
+	animation-delay: -3.333s;
+}
+
+.moving-div:nth-child(6) {
+	animation-delay: -4.166s;
+}
+
+@keyframes moveAlongPath {
+	0% {
+		offset-distance: 0%;
+	}
+	100% {
+		offset-distance: 100%;
+	}
+}
+
+.animation-path {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
