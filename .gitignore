@@ -21,3 +21,5 @@ node_modules
 
 # cli
 dist
+packages/foundry/foundry.toml
+packages/nextjs/utils/customChains.ts

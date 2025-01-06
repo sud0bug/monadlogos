@@ -1194,6 +1194,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nadnameservice/nns-viem-sdk@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@nadnameservice/nns-viem-sdk@npm:1.0.4"
+  dependencies:
+    viem: ^2.21.16
+  checksum: 85aa5f8207bec8d5837ca1e01111d6a937ad8670f8d18b9fbc01b494f5b71d2212cefbaa6cdabb6757d9fa5d09be1f47d0349caab95be4785a5f575679671a6f
+  languageName: node
+  linkType: hard
+
 "@next/env@npm:14.2.22":
   version: 14.2.22
   resolution: "@next/env@npm:14.2.22"
@@ -1608,6 +1617,7 @@ __metadata:
   resolution: "@se-2/nextjs@workspace:packages/nextjs"
   dependencies:
     "@heroicons/react": ~2.1.5
+    "@nadnameservice/nns-viem-sdk": ^1.0.4
     "@rainbow-me/rainbowkit": 2.1.6
     "@tanstack/react-query": ~5.59.15
     "@trivago/prettier-plugin-sort-imports": ~4.3.0
@@ -1635,6 +1645,7 @@ __metadata:
     react-copy-to-clipboard: ~5.1.0
     react-dom: ~18.3.1
     react-hot-toast: ~2.4.0
+    react-intersection-observer: ^9.14.1
     tailwindcss: ~3.4.11
     type-fest: ~4.26.1
     typescript: <5.6.0
@@ -7989,6 +8000,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ox@npm:0.6.0":
+  version: 0.6.0
+  resolution: "ox@npm:0.6.0"
+  dependencies:
+    "@adraffy/ens-normalize": ^1.10.1
+    "@noble/curves": ^1.6.0
+    "@noble/hashes": ^1.5.0
+    "@scure/bip32": ^1.5.0
+    "@scure/bip39": ^1.4.0
+    abitype: ^1.0.6
+    eventemitter3: 5.0.1
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 7d4bbdcadc5e62290e34767a0f1b5fdd7d3bd3e6db7fc5a5d7f42cc4b55d39aa4e1228196711179b764392320dd2f211b963c710efd6bc45a1ae648596ec9df9
+  languageName: node
+  linkType: hard
+
 "p-finally@npm:^2.0.0":
   version: 2.0.1
   resolution: "p-finally@npm:2.0.1"
@@ -8637,6 +8668,19 @@ __metadata:
     react: ">=16"
     react-dom: ">=16"
   checksum: 3e337816db574782454bf09c63a8aca546bf9c5be3f83d0494d24bdcfd97ca2db64d4c151c4ab0184d2342d7a7226403e6812e70caf03c8b55a07787bb4ad0f2
+  languageName: node
+  linkType: hard
+
+"react-intersection-observer@npm:^9.14.1":
+  version: 9.14.1
+  resolution: "react-intersection-observer@npm:9.14.1"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 99aace763dbb2d43c4b7c8131cf2f9b826022690c7049da148d4f921d58680d9e7556b32a488af6d277134eb89e1ae75bd9913fae1b04002cacda371f83c26da
   languageName: node
   linkType: hard
 
@@ -10635,6 +10679,28 @@ __metadata:
     typescript:
       optional: true
   checksum: d5caab471112e9b5a759b379b9dae00742da114449c29b249fe810ec9403e8c7c4823f27bc4139c8376bee74cdafc892845037e6f17153919a2f40b757a797a9
+  languageName: node
+  linkType: hard
+
+"viem@npm:^2.21.16":
+  version: 2.22.2
+  resolution: "viem@npm:2.22.2"
+  dependencies:
+    "@noble/curves": 1.7.0
+    "@noble/hashes": 1.6.1
+    "@scure/bip32": 1.6.0
+    "@scure/bip39": 1.5.0
+    abitype: 1.0.7
+    isows: 1.0.6
+    ox: 0.6.0
+    webauthn-p256: 0.0.10
+    ws: 8.18.0
+  peerDependencies:
+    typescript: ">=5.0.4"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: e13bf3f6e52cbd5ef99bfc3472f21460ea661ade9e4fb8b0e7b6ed06231df3aebd2c2446cd98507553d072d1ac8abb8e64dd6827439a4c9fea1f317419091a20
   languageName: node
   linkType: hard
 

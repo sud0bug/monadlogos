@@ -6,10 +6,14 @@ import { normalize } from "viem/ens";
 import { useEnsAddress, useEnsAvatar, useEnsName } from "wagmi";
 import { CommonInputProps, InputBase, isENS } from "~~/components/scaffold-eth";
 
+interface AddressInputProps extends CommonInputProps<Address | string> {
+  onSubmit?: () => void;
+}
+
 /**
  * Address input with ENS name resolution
  */
-export const AddressInput = ({ value, name, placeholder, onChange, disabled }: CommonInputProps<Address | string>) => {
+export const AddressInput = ({ value, name, placeholder, onChange, disabled, onSubmit }: AddressInputProps) => {
   // Debounce the input to keep clean RPC calls when resolving ENS names
   // If the input is an address, we don't need to debounce it
   const [_debouncedValue] = useDebounceValue(value, 500);
@@ -79,42 +83,51 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
     ensAddress === null;
 
   return (
-    <InputBase<Address>
-      name={name}
-      placeholder={placeholder}
-      error={ensAddress === null}
-      value={value as Address}
-      onChange={onChange}
-      disabled={isEnsAddressLoading || isEnsNameLoading || disabled}
-      reFocus={reFocus}
-      prefix={
-        ensName ? (
-          <div className="flex bg-base-300 rounded-l-full items-center">
-            {isEnsAvatarLoading && <div className="skeleton bg-base-200 w-[35px] h-[35px] rounded-full shrink-0"></div>}
-            {ensAvatar ? (
-              <span className="w-[35px]">
-                {
-                  // eslint-disable-next-line
-                  <img className="w-full rounded-full" src={ensAvatar} alt={`${ensAddress} avatar`} />
-                }
-              </span>
-            ) : null}
-            <span className="text-accent px-2">{enteredEnsName ?? ensName}</span>
-          </div>
-        ) : (
-          (isEnsNameLoading || isEnsAddressLoading) && (
-            <div className="flex bg-base-300 rounded-l-full items-center gap-2 pr-2">
-              <div className="skeleton bg-base-200 w-[35px] h-[35px] rounded-full shrink-0"></div>
-              <div className="skeleton bg-base-200 h-3 w-20"></div>
+    <div className="join w-full border-2 border-base-300 rounded-1">
+      <InputBase<Address>
+        name={name}
+        placeholder={placeholder}
+        error={ensAddress === null}
+        value={value as Address}
+        onChange={onChange}
+        disabled={isEnsAddressLoading || isEnsNameLoading || disabled}
+        reFocus={reFocus}
+        className="flex-1 rounded-md"
+        prefix={
+          ensName ? (
+            <div className="flex bg-base-300 rounded-sm items-center">
+              {isEnsAvatarLoading && <div className="skeleton bg-base-200 w-[35px] h-[35px] rounded-sm shrink-0"></div>}
+              {ensAvatar ? (
+                <span className="w-[35px]">
+                  {
+                    // eslint-disable-next-line
+                    <img className="w-full rounded-sm" src={ensAvatar} alt={`${ensAddress} avatar`} />
+                  }
+                </span>
+              ) : null}
+              <span className="text-accent px-2">{enteredEnsName ?? ensName}</span>
             </div>
+          ) : (
+            (isEnsNameLoading || isEnsAddressLoading) && (
+              <div className="flex bg-base-300 rounded-sm items-center gap-2 pr-2">
+                <div className="skeleton bg-base-200 w-[35px] h-[35px] rounded-sm shrink-0"></div>
+                <div className="skeleton bg-base-200 h-3 w-20"></div>
+              </div>
+            )
           )
-        )
-      }
-      suffix={
-        // Don't want to use nextJS Image here (and adding remote patterns for the URL)
-        // eslint-disable-next-line @next/next/no-img-element
-        value && <img alt="" className="!rounded-full" src={blo(value as `0x${string}`)} width="35" height="35" />
-      }
-    />
+        }
+      />
+      {onSubmit && (
+        <button
+          className="btn-sm h-[2.25rem] bg-base-300/50 hover:bg-base-300"
+          onClick={onSubmit}
+          disabled={isEnsAddressLoading || isEnsNameLoading || disabled}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+          </svg>
+        </button>
+      )}
+    </div>
   );
 };

@@ -16,6 +16,7 @@ import {
 import { BlockieAvatar, isENS } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
+import { useNNS } from "~~/hooks/useNNS";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -32,6 +33,8 @@ export const AddressInfoDropdown = ({
   displayName,
   blockExplorerAddressLink,
 }: AddressInfoDropdownProps) => {
+  const { name: nns, avatar: nnsAvatar } = useNNS(address);
+
   const { disconnect } = useDisconnect();
   const checkSumAddress = getAddress(address);
 
@@ -48,10 +51,10 @@ export const AddressInfoDropdown = ({
   return (
     <>
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
-        <summary tabIndex={0} className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 !h-auto">
-          <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
+        <summary tabIndex={0} className="rounded-full btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 !h-auto">
+          <BlockieAvatar address={checkSumAddress} size={30} ensImage={nnsAvatar || ensAvatar} />
           <span className="ml-2 mr-1">
-            {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}
+            {nns ? nns : isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}
           </span>
           <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
         </summary>
