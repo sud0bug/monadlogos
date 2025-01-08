@@ -1,22 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { NFTCard } from "./NFTCard";
+// import { NFTCard } from "./NFTCard";
+import NFTCard from "./NFTCardV2";
 import { useAccount } from "wagmi";
 import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
 
 export interface Collectible {
   id: number;
-  uri: string;
-  owner: string;
-  image: string;
-  name: string;
 }
 
 export const MyNfts = () => {
   const { address: connectedAddress } = useAccount();
   const [myNfts, setMyNfts] = useState<(Collectible | null)[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: monadLogoNFTContract } = useScaffoldContract({
     contractName: "MonadLogoNFT",
@@ -31,52 +29,55 @@ export const MyNfts = () => {
 
   useEffect(() => {
     const updateMyNfts = async (): Promise<void> => {
-      if (balance === undefined || monadLogoNFTContract === undefined || connectedAddress === undefined) return;
-
-      const totalBalance = parseInt(balance.toString());
-      setMyNfts(new Array(totalBalance).fill(null));
+      if (!monadLogoNFTContract || !balance || !connectedAddress || isLoading) return;
       
-      const batchSize = 5;
+      setIsLoading(true);
       
-      for (let i = 0; i < totalBalance; i += batchSize) {
-        const batch = Array.from({ length: Math.min(batchSize, totalBalance - i) }, (_, index) => i + index);
+      try {
+        const totalBalance = parseInt(balance.toString());
+        setMyNfts(new Array(totalBalance).fill(null));
         
-        try {
-          await Promise.all(
-            batch.map(async tokenIndex => {
-              try {
-                const tokenId = await monadLogoNFTContract.read.tokenOfOwnerByIndex([connectedAddress, BigInt(tokenIndex)]);
-                const tokenURI = await monadLogoNFTContract.read.tokenURI([tokenId]);
-                
-                const tokenMetadata = await fetch(tokenURI);
-                const metadata = await tokenMetadata.json();
-                
-                setMyNfts(prev => {
-                  const updated = [...prev];
-                  updated[tokenIndex] = {
-                    id: parseInt(tokenId.toString()),
-                    uri: tokenURI,
-                    owner: connectedAddress,
-                    image: metadata.image,
-                    name: metadata.name,
-                  };
-                  return updated;
-                });
-              } catch (e) {
-                console.log(e);
-                notification.error(`Error fetching NFT #${tokenIndex}`);
-              }
-            })
+        const batchSize = 10;
+        
+        for (let i = 0; i < totalBalance; i += batchSize) {
+          const batch = Array.from(
+            { length: Math.min(batchSize, totalBalance - i) }, 
+            (_, index) => i + index
           );
-        } catch (e) {
-          console.log(e);
-          notification.error("Error processing NFT batch");
+          
+          try {
+            await Promise.all(
+              batch.map(async tokenIndex => {
+                try {
+                  const tokenId = await monadLogoNFTContract.read.tokenOfOwnerByIndex([
+                    connectedAddress, 
+                    BigInt(tokenIndex)
+                  ]);
+                  
+                  setMyNfts(prev => {
+                    const updated = [...prev];
+                    updated[tokenIndex] = {
+                      id: parseInt(tokenId.toString())
+                    };
+                    return updated;
+                  });
+                } catch (e) {
+                  console.log(e);
+                  notification.error(`Error fetching NFT #${tokenIndex}`);
+                }
+              })
+            );
+          } catch (e) {
+            console.log(e);
+            notification.error("Error processing NFT batch");
+          }
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
     updateMyNfts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectedAddress, balance]);
 
   return (
@@ -86,13 +87,12 @@ export const MyNfts = () => {
         <p className="text-xl">{balance ? balance.toString() : 0}</p>
       </div>
       {myNfts.length > 0 && (
-      <div className="flex flex-wrap gap-4 my-8 px-5 justify-center">
-        {myNfts.map((item, index) => (
-          <NFTCard 
-            nft={item} 
-            key={item?.id ?? index} 
-            isLoading={!item}
-            transfer={true} 
+        <div className="flex flex-wrap gap-4 my-8 px-5 justify-center">
+          {myNfts.map((item, index) => (
+            <NFTCard 
+              tokenId={item?.id ?? index}
+              key={item?.id ?? index}
+              transfer={true}
             />
           ))}
         </div>

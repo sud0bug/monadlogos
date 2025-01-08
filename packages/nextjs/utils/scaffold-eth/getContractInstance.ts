@@ -1,0 +1,1 @@
+// getContract function which gets the contract instance. Refer to

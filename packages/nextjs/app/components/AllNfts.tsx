@@ -1,20 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { NFTCard } from "./NFTCard";
+import NFTCard from "./NFTCardV2";
 import { useScaffoldContract, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
+import { useInView } from "react-intersection-observer";
 
 export interface Collectible {
   id: number;
-  uri: string;
-  owner: string;
-  image: string;
-  name: string;
 }
 
 export const AllNfts = () => {
   const [allNfts, setAllNfts] = useState<(Collectible | null)[]>([]);
+  const [loadedCount, setLoadedCount] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const { ref, inView } = useInView();
 
   const { data: monadLogoNFTContract } = useScaffoldContract({
     contractName: "MonadLogoNFT",
@@ -26,54 +26,48 @@ export const AllNfts = () => {
     watch: true,
   });
 
-  const fetchNFTs = async (): Promise<void> => {
-    if (!monadLogoNFTContract || !totalSupply) return;
+  const fetchNFTs = async (startIndex: number, count: number): Promise<void> => {
+    if (!monadLogoNFTContract || !totalSupply || isLoading) return;
     
-    const total = parseInt(totalSupply.toString());
-    const batchSize = 10;
+    setIsLoading(true);
     
-    for (let i = total - 1; i >= 0; i -= batchSize) {
-      const batch = Array.from(
-        { length: Math.min(batchSize, i + 1) }, 
-        (_, index) => i - index
-      );
+    try {
+      const total = parseInt(totalSupply.toString());
+      const batchSize = 10;
+      const endIndex = Math.max(0, startIndex - count);
       
-      try {
-        // Process batch of tokens concurrently, but wait for each batch to complete
-        await Promise.all(
-          batch.map(async tokenIndex => {
-            try {
-              const tokenId = await monadLogoNFTContract.read.tokenByIndex([BigInt(tokenIndex)]);
-              
-              const [tokenURI, owner] = await Promise.all([
-                monadLogoNFTContract.read.tokenURI([tokenId]),
-                monadLogoNFTContract.read.ownerOf([tokenId])
-              ]);
-              
-              const tokenMetadata = await fetch(tokenURI);
-              const metadata = await tokenMetadata.json();
-              
-              setAllNfts(prev => {
-                const updated = [...prev];
-                updated[tokenIndex] = {
-                  id: parseInt(tokenId.toString()),
-                  uri: tokenURI,
-                  owner,
-                  image: metadata.image,
-                  name: metadata.name,
-                };
-                return updated;
-              });
-            } catch (e) {
-              console.log(e);
-              notification.error(`Error fetching NFT #${tokenIndex}`);
-            }
-          })
+      for (let i = startIndex; i >= endIndex; i -= batchSize) {
+        const batch = Array.from(
+          { length: Math.min(batchSize, i + 1) }, 
+          (_, index) => i - index
         );
-      } catch (e) {
-        console.log(e);
-        notification.error("Error processing NFT batch");
+        
+        try {
+          await Promise.all(
+            batch.map(async tokenIndex => {
+              try {
+                const tokenId = await monadLogoNFTContract.read.tokenByIndex([BigInt(tokenIndex)]);
+                
+                setAllNfts(prev => {
+                  const updated = [...prev];
+                  updated[tokenIndex] = {
+                    id: parseInt(tokenId.toString())
+                  };
+                  return updated;
+                });
+              } catch (e) {
+                console.log(e);
+                notification.error(`Error fetching NFT #${tokenIndex}`);
+              }
+            })
+          );
+        } catch (e) {
+          console.log(e);
+          notification.error("Error processing NFT batch");
+        }
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,9 +75,20 @@ export const AllNfts = () => {
     if (totalSupply) {
       const total = parseInt(totalSupply.toString());
       setAllNfts(new Array(total).fill(null));
-      fetchNFTs();
+      fetchNFTs(total - 1, 10);
     }
   }, [totalSupply]);
+
+  useEffect(() => {
+    if (inView && totalSupply && !isLoading) {
+      const total = parseInt(totalSupply.toString());
+      const nextBatch = Math.min(loadedCount + 10, total);
+      if (loadedCount < total) {
+        fetchNFTs(total - loadedCount - 1, 10);
+        setLoadedCount(nextBatch);
+      }
+    }
+  }, [inView, totalSupply, loadedCount, isLoading]);
 
   return (
     <>
@@ -93,14 +98,15 @@ export const AllNfts = () => {
       </div>
       
       <div className="flex flex-wrap gap-4 my-8 px-5 justify-center">
-        {[...allNfts].reverse().map((item, index) => (
+        {[...allNfts].reverse().slice(0, loadedCount).map((item, index) => (
           <NFTCard 
-            nft={item} 
+            tokenId={item?.id ?? Number(totalSupply) - (index+1)} 
             key={item?.id ?? Number(totalSupply) - (index+1)} 
-            isLoading={!item} 
           />
         ))}
       </div>
+      
+      <div ref={ref} className="h-10 w-full" />
     </>
   );
 };
