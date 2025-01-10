@@ -26,7 +26,7 @@ scrollSepolia = "https://sepolia-rpc.scroll.io"
 scroll = "https://rpc.scroll.io"
 pgn = "https://rpc.publicgoods.network"
 pgnTestnet = "https://sepolia.publicgoods.network"
-monadDevnet= "https://devnet1.monad.xyz/rpc/8XQAiNSsPCrIdVttyeFLC6StgvRNTdf"
+monadDevnet= "https://rpc-devnet.monadinfra.com/rpc/3fe540e310bbb6ef0b9f16cd23073b0a"
 
 [etherscan]
 polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }

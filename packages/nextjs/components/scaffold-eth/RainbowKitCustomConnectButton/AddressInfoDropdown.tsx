@@ -20,6 +20,8 @@ import { useNNS } from "~~/hooks/useNNS";
 
 const allowedNetworks = getTargetNetworks();
 
+console.log("allowedNetworks", allowedNetworks);
+
 type AddressInfoDropdownProps = {
   address: Address;
   blockExplorerAddressLink: string | undefined;
