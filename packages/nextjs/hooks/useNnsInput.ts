@@ -5,7 +5,7 @@ import { monadDevnet } from "~~/utils/customChains";
 
 const publicClient = createPublicClient({
   chain: monadDevnet,
-  transport: http("https://devnet1.monad.xyz/rpc/8XQAiNSsPCrIdVttyeFLC6StgvRNTdf"),
+  transport: http("https://rpc-devnet.monadinfra.com/rpc/3fe540e310bbb6ef0b9f16cd23073b0a"),
   batch: {
     multicall: true
   }

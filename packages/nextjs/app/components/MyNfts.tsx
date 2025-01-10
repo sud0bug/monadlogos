@@ -9,6 +9,9 @@ import { notification } from "~~/utils/scaffold-eth";
 
 export interface Collectible {
   id: number;
+  image?: string;
+  owner?: string;
+  uri?: string;
 }
 
 export const MyNfts = () => {

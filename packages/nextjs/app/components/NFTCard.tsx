@@ -3,7 +3,7 @@ import { Collectible } from "./MyNfts";
 import { Address, AddressInput } from "~~/components/scaffold-eth";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
-export const NFTCard = ({ nft, transfer, isLoading }: { nft: Collectible | null; transfer?: boolean; isLoading?: boolean }) => {
+export const NFTCard = ({ nft, transfer, isLoading, image }: { nft: Collectible | null; transfer?: boolean; isLoading?: boolean, image?: string }) => {
   const [transferToAddress, setTransferToAddress] = useState("");
 
   const { writeContractAsync } = useScaffoldWriteContract("MonadLogoNFT");
@@ -46,7 +46,7 @@ export const NFTCard = ({ nft, transfer, isLoading }: { nft: Collectible | null;
           <span className="">Color : </span>
           <div className="flex items-center space-x-2">
             <span className="font-semibold ms-0">
-              {JSON.parse(atob(nft.uri.replace('data:application/json;base64,', ''))).attributes[0].value}
+              { nft.uri ? JSON.parse(atob(nft.uri.replace('data:application/json;base64,', ''))).attributes[0].value : "N/A"}
             </span>
           </div>
         </div>
