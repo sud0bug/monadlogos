@@ -1,4 +1,4 @@
-# 🟣 Monad Logo NFTs
+# 🟣 Monad Logos
 
 **A simple NFT collection of Monad logos in different colors.**  
 
